@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> ECOSMARTAGRI </title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>AI FOR FORMERS  </h1>
+        
+        <!-- Weather and Crop Suggestion -->
+        <div class="card">
+            <h2>Weather & Crop Suggestion</h2>
+            <form id="weatherForm" method="POST">
+                <div class="form-group">
+                    <label for="location">Location</label>
+                    <input type="text" id="location" name="location" placeholder="e.g., New York">
+                </div>
+                <button type="submit" name="get_weather">Get Weather & Suggest Crops</button>
+            </form>
+        </div>
+        
+        {% if weather_data %}
+            <div class="card result-card">
+                <h2>Weather Forecast</h2>
+                {% if weather_data.error %}
+                    <p class="error">{{ weather_data.error }}</p>
+                {% else %}
+                    <div class="result-item"><span class="result-label">Temperature:</span> {{ weather_data.temp }}°C</div>
+                    <div class="result-item"><span class="result-label">Conditions:</span> {{ weather_data.description }}</div>
+                    <div class="result-item"><span class="result-label">Humidity:</span> {{ weather_data.humidity }}%</div>
+                {% endif %}
+            </div>
+        {% endif %}
+        
+        {% if suggested_crops %}
+            <div class="card result-card">
+                <h2>Suggested Crops</h2>
+                <p class="result-text">{{ suggested_crops }}</p>
+            </div>
+        {% endif %}
+        
+        <!-- Disease Prediction -->
+        <div class="card">
+            <h2>Disease Prediction</h2>
+            <form id="diseaseForm" method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="crop_type">Crop Type</label>
+                    <input type="text" id="crop_type" name="crop_type" placeholder="e.g., Wheat">
+                </div>
+                <div class="form-group">
+                    <label for="image">Upload Plant Image</label>
+                    <input type="file" id="image" name="image">
+                </div>
+                <button type="submit" name="predict_disease">Predict Disease</button>
+            </form>
+        </div>
+        
+        {% if disease_result %}
+            <div class="card result-card">
+                <h2>Disease Prediction Result</h2>
+                {% if disease_result.error %}
+                    <p class="error">{{ disease_result.error }}</p>
+                {% else %}
+                    {% if disease_result.image_path %}
+                        <div class="image-container">
+                            <h3>Uploaded Plant Image</h3>
+                            <img src="{{ disease_result.image_path }}" alt="Plant Disease Image" class="disease-image">
+                        </div>
+                    {% endif %}
+                    <div class="prediction-container">
+                        <h3>Disease Analysis</h3>
+                        <div class="result-item"><span class="result-label">Prediction:</span> <span class="result-text">{{ disease_result.prediction }}</span></div>
+                        <div class="result-item"><span class="result-label">Precautions:</span> <span class="result-text">{{ disease_result.precautions }}</span></div>
+                    </div>
+                {% endif %}
+            </div>
+        {% endif %}
+        
+        <!-- Chatbot -->
+        <div class="card">
+            <h2>Ask the Bot {% if language %} ({{ language|capitalize }}) {% endif %}</h2>
+            <div class="chat-box" id="chatBox">
+                {% if not language %}
+                    <div class="chat-message bot-message">Which language would you like? English, Hindi, tamil?</div>
+                {% endif %}
+                {% for entry in chat_history %}
+                    <div class="chat-message user-message">{{ entry.user }}</div>
+                    <div class="chat-message bot-message">{{ entry.bot }}</div>
+                {% endfor %}
+            </div>
+            <form id="chatForm" class="chat-form">
+                <input type="text" id="chatInput" name="chat_input" placeholder="Type your question..." required>
+                <button type="submit" id="chatSubmit">Ask</button>
+            </form>
+            <button id="clearChat" class="clear-button">Clear Chat</button>
+            <div id="chatLoading" class="loading-spinner"></div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
