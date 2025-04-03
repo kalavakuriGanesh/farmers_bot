@@ -1,0 +1,21 @@
+# Exclude virtual environment
+.venv/
+
+# Exclude Python cache files
+__pycache__/
+*.pyc
+
+# Exclude environment variables file
+.env
+
+# Exclude temporary image uploads
+static/temp_images/
+
+# Exclude node_modules (if using Node.js for Tailwind or other tools)
+node_modules/
+
+# Exclude log files
+*.log
+
+# Exclude Vercel build output (if any)
+.vercel/
